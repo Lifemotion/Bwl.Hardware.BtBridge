@@ -40,19 +40,19 @@ void hc_configure()
 {
 	KEY_LOW;
 	uart_init_withdivider(HC_UART, GET_UBRR(F_CPU, 9600));
-	var_delay_ms(2000);
+	var_delay_ms(1000);
 	KEY_HIGH;
-	var_delay_ms(200);
+	var_delay_ms(1000);
 	hc_send_line("AT+RMAAD");
-	var_delay_ms(200);
+	var_delay_ms(1000);
 	hc_send_line("AT+ROLE=0");
-	var_delay_ms(200);
+	var_delay_ms(1000);
 	hc_send_string("AT+NAME=");
 	hc_send_line(BLUETOOTH_NAME);
-	var_delay_ms(200);
+	var_delay_ms(1000);
 	hc_send_string("AT+PSWD=");
 	hc_send_line(BLUETOOTH_PASSWORD);
-	var_delay_ms(200);
+	var_delay_ms(1000);
 	hc_send_line("AT+RESET");
 	KEY_LOW;
 }

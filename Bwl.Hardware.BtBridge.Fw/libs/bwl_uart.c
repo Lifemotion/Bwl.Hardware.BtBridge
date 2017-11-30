@@ -140,3 +140,12 @@ unsigned char uart_get(unsigned char port)
 	#endif
 	return 0;
 }
+
+void uart_send_string(unsigned char port,char *string)
+{
+	unsigned char i=0;
+	while (string[i]>0 && i<256)
+	{
+		uart_send(port, string[i++]);
+	}
+}
