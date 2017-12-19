@@ -110,6 +110,7 @@ int main(void)
 		if(tx_serial_delay == 0 && tx_buffer_cursor>0){
 			for(int i=0;i<tx_buffer_cursor;i++){
 				uart_send(0, tx_buffer[i]);
+				var_delay_ms(1);
 				wdt_reset();
 			}
 			tx_buffer_cursor = 0;
