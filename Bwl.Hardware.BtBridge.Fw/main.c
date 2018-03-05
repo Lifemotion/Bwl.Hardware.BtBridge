@@ -86,8 +86,8 @@ void select_mode()
 int main(void)
 {
 	wdt_enable(WDTO_8S);
+	wdt_reset();
 	board_init();
-	hc_configure();	
 	serial_transmitter_mode();
 	unsigned int rx_serial_delay = 0;
 	unsigned int tx_serial_delay = 0;

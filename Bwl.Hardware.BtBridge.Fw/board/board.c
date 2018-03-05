@@ -11,14 +11,37 @@ float battery_voltage()
 	return 7.8*2.56/1024*adc_read_average(5);
 }
 
+void hc_uart_send(char data)
+{
+	uart_send(0, data);
+}
+unsigned char hc_uart_get()
+{
+	return uart_get(0);
+}
+
+unsigned char hc_uart_received()
+{
+	return uart_received(0);
+}
+
+void hc_key_pin_set(char isHigh)
+{
+	if(isHigh){
+		pin_high(HC_KEY);
+	}else{
+		pin_low(HC_KEY);		
+	}
+}
+
+
 void board_init()
 {
-	hc_configure();
-	uart_init_withdivider(1, 207);
+	uart_init_withdivider(0, GET_UBRR(F_CPU,38400));
+	hc_init("OrlanTool","0000");
 	pin_input_pullup(BUTTON_1);
 	pin_low(IR_POWER_PIN);
 	pin_input_pullup(BUTTON_2);
 	pin_low(LED_1);
-	var_delay_ms(2000);
 	pin_high(LED_1);
 }
