@@ -47,7 +47,7 @@ int hc_init(char* device_name, char* device_password)
 	int buffer_pointer = 0;
 	unsigned long delay = 0;
 	hc_key_pin_set(1);
-	var_delay_ms(300);
+	var_delay_ms(800);
 	hc_send_line("AT+RMAAD");
 	var_delay_ms(100);
 	hc_send_line("AT+ROLE=0");
@@ -65,6 +65,8 @@ int hc_init(char* device_name, char* device_password)
 		}
 	}
 	var_delay_ms(100);
+	hc_send_line("AT+RESET");
+	hc_send_line("AT+RESET");
 	hc_send_line("AT+RESET");
 	hc_key_pin_set(0);
 	if(strstr("OK", buffer))return 1;

@@ -37,11 +37,13 @@ void hc_key_pin_set(char isHigh)
 
 void board_init()
 {
-	uart_init_withdivider(0, GET_UBRR(F_CPU,38400));
-	hc_init("OrlanTool","0000");
+	//uart_init_withdivider(0, GET_UBRR(F_CPU,38400));
+	//hc_init("OrlanTool","0000");
+	uart_init_withdivider(0, GET_UBRR(F_CPU,9600));
 	pin_input_pullup(BUTTON_1);
-	pin_low(IR_POWER_PIN);
 	pin_input_pullup(BUTTON_2);
+	pin_input_pullup(BUTTON_MODE);
+	pin_low(IR_POWER_PIN);
 	pin_low(LED_1);
 	pin_high(LED_1);
 }

@@ -18,13 +18,14 @@
 
 #define RS_TXEN			D,5
 #define RS_RXEN			D,4
-#define IR_POWER_PIN	B,7
+#define IR_POWER_PIN	B,3
 #define IR_TX_PIN    	A,3
 #define LED_3           A,1
 #define LED_2           A,0
 #define LED_1           A,2
-#define BUTTON_1        A,3
-#define BUTTON_2        A,2
+#define BUTTON_1        B,0
+#define BUTTON_2        B,1
+#define BUTTON_MODE     B,2
 
 #define HC_KEY          C,6
 

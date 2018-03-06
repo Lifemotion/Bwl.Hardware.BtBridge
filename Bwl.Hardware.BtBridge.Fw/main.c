@@ -7,17 +7,17 @@ unsigned int  rx_buffer_cursor   = 0;
 
 unsigned char tx_buffer[BUFFER_SIZE];
 unsigned int  tx_buffer_cursor   = 0;
-unsigned char mode = 0;
+unsigned char mode = 10;
+
 void ir_receiver_mode()
 {
-	pin_high(RS_TXEN);
+	pin_high(RS_RXEN);
 	pin_low(LED_2);
 	pin_low(IR_POWER_PIN);
 	var_delay_ms(100);
 	pin_high(LED_2);
-	uart_init_withdivider(1, F_CPU/16/2400  -1);
+	uart_init_withdivider(1, GET_UBRR(F_CPU, 2400));
 	uart_send_string(0, "IR mode enabled."); 
-	mode = 1;
 }
 
 void sserial_tx_mode(){
@@ -38,10 +38,8 @@ void serial_transmitter_mode()
 	pin_high(IR_POWER_PIN);
 	var_delay_ms(100);
 	pin_high(LED_2);
-	uart_init_withdivider(1, F_CPU/16/38400  -1); 
+	uart_init_withdivider(1, GET_UBRR(F_CPU, 38400)); 
 	uart_send_string(0, "Serial mode."); 
-	mode = 2;
-
 }
 
 void select_mode()
@@ -76,10 +74,15 @@ void select_mode()
 			case '8': uart_init_withdivider_x2(1, F_CPU/8/56000  -1); uart_send_string(0, "56000"); break;
 		}
 		uart_send_string(0, "\r\n");
-	} else if(pin_get_in(BUTTON_1)==0){		
+	}
+
+	if(pin_get_in(BUTTON_MODE)==0 && mode != 1){		
 		ir_receiver_mode();
-	} else if(pin_get_in(BUTTON_2)==0){
+		mode = 1;
+	}else if(pin_get_in(BUTTON_MODE)>0 && mode != 0)
+	{
 		serial_transmitter_mode();
+		mode = 0;
 	}
 }
 
@@ -88,7 +91,6 @@ int main(void)
 	wdt_enable(WDTO_8S);
 	wdt_reset();
 	board_init();
-	serial_transmitter_mode();
 	unsigned int rx_serial_delay = 0;
 	unsigned int tx_serial_delay = 0;
     while (1) 
@@ -96,17 +98,18 @@ int main(void)
 		wdt_reset();
 		select_mode();
 		//ИК мост
-		sserial_rx_mode();
 		if(uart_received(1) && mode==1){
 			pin_low(LED_2);
 			uart_send(0, uart_get(1));
 			pin_high(LED_2);
 		}
+
 		//последовательный прием
-		if(uart_received(1) && mode == 2 && tx_buffer_cursor<BUFFER_SIZE){
+		if(uart_received(1) && mode == 0 && tx_buffer_cursor<BUFFER_SIZE){
 			tx_buffer[tx_buffer_cursor++] = uart_get(1);
-			tx_serial_delay = 4500;
+			tx_serial_delay = 6500;
 		}
+
 		if(tx_serial_delay == 0 && tx_buffer_cursor>0){
 			for(int i=0;i<tx_buffer_cursor;i++){
 				uart_send(0, tx_buffer[i]);
@@ -115,7 +118,7 @@ int main(void)
 			}
 			tx_buffer_cursor = 0;
 		}		
-		if(uart_received(0) && mode == 2 && rx_buffer_cursor<BUFFER_SIZE){
+		if(uart_received(0) && mode == 0 && rx_buffer_cursor<BUFFER_SIZE){
 			rx_buffer[rx_buffer_cursor++] = uart_get(0);
 			rx_serial_delay = 3500;
 		}		
