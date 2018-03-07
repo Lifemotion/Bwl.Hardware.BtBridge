@@ -11,7 +11,7 @@ unsigned char mode = 10;
 
 void ir_receiver_mode()
 {
-	pin_high(RS_RXEN);
+	pin_high(RS_TXEN);
 	pin_low(LED_2);
 	pin_low(IR_POWER_PIN);
 	var_delay_ms(100);
@@ -45,7 +45,7 @@ void serial_transmitter_mode()
 void select_mode()
 {	
 	if(pin_get_in(BUTTON_1)==0 || pin_get_in(BUTTON_2)==0)var_delay_ms(1500);//Антидребезг
-	if(pin_get_in(BUTTON_1)==0 && pin_get_in(BUTTON_2)==0){
+	if(pin_get_in(BUTTON_MODE)==0){
 		uart_init_withdivider(1, 12);
 		uart_send_string(0, "Select baudrate:\r\n"); 
 		uart_send_string(0, "1) 2400\r\n");  
@@ -76,13 +76,19 @@ void select_mode()
 		uart_send_string(0, "\r\n");
 	}
 
-	if(pin_get_in(BUTTON_MODE)==0 && mode != 1){		
+	if(pin_get_in(BUTTON_1)==0 && mode != 1){		
 		ir_receiver_mode();
 		mode = 1;
-	}else if(pin_get_in(BUTTON_MODE)>0 && mode != 0)
+		pin_low(LED_2);
+		var_delay_ms(500);
+		pin_high(LED_2);
+	}else if(pin_get_in(BUTTON_2)==0 && mode != 0)
 	{
 		serial_transmitter_mode();
 		mode = 0;
+		pin_low(LED_1);
+		var_delay_ms(500);
+		pin_high(LED_1);
 	}
 }
 
